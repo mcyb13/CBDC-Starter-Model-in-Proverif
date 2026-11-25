@@ -1,0 +1,20 @@
+# ProVerif generated output (HTML results, graphs, dot files)
+out/
+*.dot
+*.log
+
+# Editor backups and swap files (nano, vim)
+*~
+*.swp
+*.swo
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Screenshots and scratch files
+Screenshot*.png
+scratch/
+tmp/
