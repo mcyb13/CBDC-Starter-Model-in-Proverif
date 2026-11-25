@@ -200,10 +200,15 @@ Next: an anonymity and unlinkability model in ProVerif using choice\[...].
 Later: zero-knowledge proofs and threshold signatures.
 
 TOOLS
+
+
 ProVerif, version: Proverif 2.05. Cryptographic protocol verifier, by Bruno Blanchet, Vincent Cheval, and Marc Sylvestre
 
 👩‍💻 Author 
-Maham Nasir MS Cybersecurity, COMSATS University Islamabad, Pakistan Researcher in Post-Quantum Cryptography & Privacy-Preserving Protocols
+Maham Nasir MS Cybersecurity, COMSATS University Islamabad, Pakistan 
+
+
+Researcher in Post-Quantum Cryptography & Privacy-Preserving Protocols
 
 LinkedIn: https://www.linkedin.com/maham-n-0315
 
