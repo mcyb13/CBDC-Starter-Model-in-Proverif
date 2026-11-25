@@ -1,0 +1,64 @@
+(* CBDC starter model, v2 -- with lock around the spent-ledger check *)
+
+free c: channel.
+free lk: channel [private].
+free ok: bitstring.
+
+type skey.
+type pkey.
+
+free Alice, Bob, ten, PaymentAccepted: bitstring.
+
+fun pk(skey): pkey.
+fun sign(bitstring, skey): bitstring.
+reduc forall m: bitstring, k: skey; checksign(sign(m, k), pk(k)) = m.
+
+table spent(bitstring).
+
+event Initiated(bitstring, bitstring, bitstring, bitstring).
+event Accepted(bitstring, bitstring, bitstring, bitstring).
+event Received(bitstring, bitstring, bitstring).
+
+(* payment_integrity *)
+query t: bitstring;
+  event(Accepted(t, Alice, Bob, ten)) ==> event(Initiated(t, Alice, Bob, ten)).
+
+(* no_replay *)
+query t: bitstring;
+  inj-event(Accepted(t, Alice, Bob, ten)) ==> inj-event(Initiated(t, Alice, Bob, ten)).
+
+(* executable (reachability) *)
+query t: bitstring;
+  event(Received(t, Bob, ten)).
+
+(* authenticity of Bob's confirmation (expected to fail: it is unsigned) *)
+query t: bitstring;
+  event(Received(t, Bob, ten)) ==> event(Accepted(t, Alice, Bob, ten)).
+
+let AlicePayment(skA: skey) =
+  new tid: bitstring;
+  event Initiated(tid, Alice, Bob, ten);
+  out(c, (tid, Alice, Bob, ten, sign((tid, Alice, Bob, ten), skA))).
+
+let Issuer(pkA: pkey) =
+  in(c, (t: bitstring, =Alice, =Bob, =ten, sg: bitstring));
+  if checksign(sg, pkA) = (t, Alice, Bob, ten) then
+  in(lk, =ok);
+  get spent(=t) in
+    out(lk, ok)
+  else
+    ( insert spent(t);
+      out(lk, ok);
+      event Accepted(t, Alice, Bob, ten);
+      out(c, (t, PaymentAccepted, Bob, ten)) ).
+
+let BobReceive() =
+  in(c, (t: bitstring, =PaymentAccepted, =Bob, =ten));
+  event Received(t, Bob, ten).
+
+process
+  new skA: skey;
+  let pkA = pk(skA) in
+  out(c, pkA);
+  out(lk, ok);
+  ( !AlicePayment(skA) | !Issuer(pkA) | !BobReceive() )
