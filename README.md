@@ -1,4 +1,3 @@
-[README_Proverif.md](https://github.com/user-attachments/files/35396030/README_Proverif.md)
 **CBDC Payment Protocol: Formal Verification Starter Models**
 
 
